@@ -29,3 +29,7 @@ extern MotorEncoder ME4;
 void motorEncoders_init();
 void encoders_getDistance(float *d1 = nullptr, float *d2 = nullptr, float *d3 = nullptr, float *d4 = nullptr);
 
+void compare_swap(float &x, float &y);
+void sort(float &r1, float &r2, float &r3, float &r4);
+float median_filter(float &r1, float &r2, float &r3, float &r4);
+

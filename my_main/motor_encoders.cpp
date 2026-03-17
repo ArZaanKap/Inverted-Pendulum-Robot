@@ -59,7 +59,7 @@ void motorEncoders_init(){
   
 }
 
-void encoders_getDistance(float *d1, float *d2, float *d3, float *d4){
+void encoders_getDistance(float *d1, float *d2, float *d3, float *d4){  // requires pointers
 
   // clockwise spin is positive count
   noInterrupts();
@@ -73,4 +73,25 @@ void encoders_getDistance(float *d1, float *d2, float *d3, float *d4){
   
 }
 
+void compare_swap(float &x, float &y){ // pass by reference
+  if (x > y){
+    float temp = x;
+    x = y;
+    y = temp;
+  }
+}
+
+// sort sensor readings in ascending order
+void sort(float &r1, float &r2, float &r3, float &r4){  // pass by reference
+  compare_swap(r1, r2);
+  compare_swap(r3, r4);
+  compare_swap(r1, r3);
+  compare_swap(r2, r4);
+  compare_swap(r2, r3);
+}
+
+float median_filter(float &r1, float &r2, float &r3, float &r4){  // pass by reference
+  sort(r1, r2, r3, r4);
+  return (r2+r3) / 2.0;
+}
 

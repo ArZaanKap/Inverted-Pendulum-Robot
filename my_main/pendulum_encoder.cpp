@@ -41,7 +41,7 @@ float get_pendulum_angle_rad() {
 
     // Raw unwrapped radians — no fmod, no normalization.
     // LQR needs continuous angle; wrapping injects false large errors.
-    static constexpr float COUNTS_TO_RAD = (2.0f * M_PI) / (4.0f * 1000.0f);
+    static constexpr float COUNTS_TO_RAD = (2.0f * PI) / (4.0f * ENCODER_CPR);
     return count * COUNTS_TO_RAD;
 }
 

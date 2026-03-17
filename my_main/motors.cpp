@@ -21,16 +21,16 @@ void motors_init()
   mc1.clearResetFlag();
   mc2.clearResetFlag();
 
-  mc1.setMaxAcceleration(1, 400);
-  mc1.setMaxDeceleration(1, 400);
-  mc1.setMaxAcceleration(2, 400);
-  mc1.setMaxDeceleration(2, 400);
+  mc1.setMaxAcceleration(1, 800);
+  mc1.setMaxDeceleration(1, 800);
+  mc1.setMaxAcceleration(2, 800);
+  mc1.setMaxDeceleration(2, 800);
   mc1.clearMotorFaultUnconditional();///////
 
-  mc2.setMaxAcceleration(1, 400);
-  mc2.setMaxDeceleration(1, 400);
-  mc2.setMaxAcceleration(2, 400);
-  mc2.setMaxDeceleration(2, 400);
+  mc2.setMaxAcceleration(1, 800);
+  mc2.setMaxDeceleration(1, 800);
+  mc2.setMaxAcceleration(2, 800);
+  mc2.setMaxDeceleration(2, 800);
   mc2.clearMotorFaultUnconditional();//////
 
 }
@@ -52,12 +52,13 @@ void motors_setSpeedAll(int16_t speed){
 // scale u from lqr to 800 to -800 range
 void motors_setCommand(float u){
 
-  static constexpr float K_u = 15.0; // TUNE....
-  static constexpr int16_t FRICTION    = 100;     // tune: min command to overcome static friction
-  static constexpr int16_t DEADBAND    = 40;  
+  static constexpr float K_u = 15.0; // TUNE.... 60?
+  //static constexpr int16_t FRICTION    = 100;     // tune: min command to overcome static friction
+  //static constexpr int16_t DEADBAND    = 40;  
 
   int16_t cmd = (int16_t)constrain(K_u * u, -800, 800);
 
+  /*
   if (abs(cmd) < DEADBAND) {
     cmd = 0;
   } else if (cmd > 0) {
@@ -65,7 +66,7 @@ void motors_setCommand(float u){
   } else {
     cmd = min(cmd, (int16_t)-FRICTION);
   }
-
+  */
   motors_setSpeedAll(cmd);
   
 }

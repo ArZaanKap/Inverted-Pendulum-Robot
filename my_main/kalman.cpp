@@ -22,11 +22,11 @@ KalmanFilter::KalmanFilter(float init_state[4]){
   H[1][2] = 1.0f;
 
   // Q -> tune: trust in physics model /////////
-  Q[0][0] = 0.001f; Q[1][1] = 0.001f; Q[2][2] = 0.001f; Q[3][3] = 0.001f;
+  Q[0][0] = 0.001f; Q[1][1] = 0.5f; Q[2][2] = 0.0001f; Q[3][3] = 0.01f;
 
   // R - sensor trust -> add noise std from datasheet?
-  R[0][0] = 0.01f; // wheel encoders
-  R[1][1] = 0.01f; // pendulum encoder
+  R[0][0] = 0.05f; // wheel encoders
+  R[1][1] = 0.005f; // pendulum encoder
 }
 
 void KalmanFilter::predict(float u){

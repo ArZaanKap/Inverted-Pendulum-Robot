@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 // Physical parameters (from dynamics.py)
-constexpr float M_cart_total  = 1.515f;
+constexpr float M_cart_total  = 1.515f; // REMEASURE
 constexpr float m_rod   = 0.043f;
 constexpr float m_tip   = 0.050f;
 constexpr float M_cart  = M_cart_total - m_rod - m_tip; // 0.828
@@ -21,7 +21,6 @@ constexpr float ml      = m_pend * l_com;
 constexpr float D_denom = M_t * I_pivot - ml * ml;
 
 // Non-zero elements of linearised continuous A matrix
-// Naming convention: A_rc where r = row, c = column (1-indexed based on math state vector [x, x_dot, theta, theta_dot])
 constexpr float A22 = -(I_pivot * b_x) / D_denom;  // Renamed from A21 to correctly reflect row 2, col 2
 constexpr float A23 = -(ml * ml * g)   / D_denom;
 constexpr float A24 =  (ml * b_theta)  / D_denom;
@@ -39,7 +38,7 @@ constexpr float B4  = -ml      / D_denom;
 // Discrete-time A and B (Euler discretisation at dt = 0.01s, 100Hz)
 // A_d = I + A_c * dt
 // B_d = B_c * dt
-constexpr float dt = 0.01f;
+constexpr float dt = 0.0025f; // IMPORTANT - in seconds (400Hz)
 
 constexpr float A[4][4] = {
   { 1,           dt,          0,          0   },
