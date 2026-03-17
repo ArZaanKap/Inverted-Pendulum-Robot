@@ -67,13 +67,13 @@ def calculate_lqr_gains():
     # ---------------------------------------------------------
     # 2. NEW DISCRETE TIME LQR
     # ---------------------------------------------------------
-    dt = 0.002  # <--- Change this to match your Arduino loop time (e.g., 0.01 for 100Hz) # 500hz
+    dt = 0.0025  # <--- Change this to match your Arduino loop time (e.g., 0.01 for 100Hz) # 500hz
     
     # Create continuous state-space system
     sys_cont = control.StateSpace(A, B, np.eye(4), np.zeros((4,1)))
     
-    # Convert to discrete using Zero-Order Hold (ZOH)
-    sys_disc = sys_cont.sample(dt, method='zoh')
+    # Convert to discrete 
+    sys_disc = sys_cont.sample(dt, method='euler') ##############################'zoh'
     Ad = sys_disc.A
     Bd = sys_disc.B
 
