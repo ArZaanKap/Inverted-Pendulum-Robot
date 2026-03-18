@@ -51,47 +51,62 @@ void setup() {
 }
 
 void loop() {
-
-  // 400Hz loop
-  unsigned long current_time = micros(); //
-
-  if (current_time - last_time >= dt_us){
-
-    //last_time = current_time;
-    last_time += dt_us;
-
-    // ANGLED START MODE
-    if (ANGLED_START==true && has_jerked==false) {
-      jerk(start_angle);       // blocking, but only runs once
-      has_jerked = true;
-
-      last_time = micros();
-      return;                  // let kalman run from next iter
+  // 1. Check for a button press to toggle Run/Stop
+  if (digitalRead(START_BUTTON_PIN) == LOW) {
+    if (!button_pressed) {
+      button_pressed = true;
+      system_running = !system_running; // Flip the state (Pause <-> Run)
+      
+      if (system_running) {
+        //Serial.println("System STARTED");
+      } else {
+        //Serial.println("System STOPPED");
+        motors_setCommand(0.0); // SAFETY: Instantly kill motor power when paused
+      }
+      
+      delay(200);           // A quick 200ms delay to debounce the physical button
+      last_time = micros(); // CRITICAL: Reset the timer right before returning to the loop
+                            // so the Kalman filter doesn't get a massive 'dt' spike.
     }
-
-
-    // read motor encoders - dist (x)
-    encoders_getDistance(&d1, &d2, &d3, &d4); // use nullptr to not read an encoder
-    avg_dist = (d1 + d2 + d3 + d4) / 4.0;
-    //float median_dist = median_filter(d1, d2, d3, d4);
-    //Serial.println(String(d1) + ", " + String(d2) + ", " + String(d3) + ", " + String(d4) + "  avg: " + String(median_dist));
-    //Serial.println(avg_dist);
-    
-    // read pendulum encoder
-    float theta = get_pendulum_angle_rad();
-    //Serial.println(degrees(theta));
-    //Serial.println("Invalid counts: " + String(pendulumEncoder_getInvalidCount()));
-
-    kalman.predict(u);
-    kalman.update(avg_dist, theta); //median_dist - TEST
-    kalman.get_state(state); // [x, x_dot, theta, theta_dot]
-    
-    u = controller.run(state);
-
-    motors_setCommand(u);
-
+  } else {
+    button_pressed = false; // Reset when button is released
   }
-  
 
+  // 2. Only execute the 400Hz control math if the system is running
+  if (system_running) {
+    unsigned long current_time = micros();
+
+    if (current_time - last_time >= dt_us) {
+      last_time += dt_us;  // or last_time = current_time??
+
+      // ANGLED START MODE
+      if (ANGLED_START == true && has_jerked == false) {
+        jerk(start_angle);       // blocking, but only runs once
+        has_jerked = true;
+
+        last_time = micros();
+        return;                  // let kalman run from next iter
+      }
+
+      // read motor encoders - dist (x)
+      encoders_getDistance(&d1, &d2, &d3, &d4); 
+      avg_dist = (d1 + d2 + d3 + d4) / 4.0;
+      
+      // read pendulum encoder
+      float theta = get_pendulum_angle_rad();
+      if (fabs(theta) > radians(40.0)){ // break if angle too large
+        motors_setSpeedAll(0);
+        system_running = false;
+        return;
+      }
+
+      kalman.predict(u);
+      kalman.update(avg_dist, theta); 
+      kalman.get_state(state); // [x, x_dot, theta, theta_dot]
+      
+      u = controller.run(state);
+
+      motors_setCommand(u);
+    }
+  }
 }
-

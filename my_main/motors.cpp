@@ -52,7 +52,7 @@ void motors_setSpeedAll(int16_t speed){
 // scale u from lqr to 800 to -800 range
 void motors_setCommand(float u){
 
-  static constexpr float K_u = 10.0; // TUNE.... 15?
+  static constexpr float K_u = 45.0; // TUNE.... 15?
   //static constexpr int16_t FRICTION    = 100;     // tune: min command to overcome static friction
   //static constexpr int16_t DEADBAND    = 40;  
 

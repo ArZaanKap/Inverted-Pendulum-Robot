@@ -16,20 +16,27 @@ KalmanFilter::KalmanFilter(float init_state[4]){
 
   // init P - high uncertainty at start
   for (int i=0; i<4; i++) P[i][i] = 1.0f; // identity matrix
+  //P[0][0] = 0.01;   // x
+  //P[1][1] = 0.01;   // x_dot
+  //P[2][2] = 0.1;   // theta
+  //P[3][3] = 0.1;   // theta_dot
+
 
   // H - x, theta is measured
   H[0][0] = 1.0f;
   H[1][2] = 1.0f;
 
-  // Q -> tune: trust in physics model ///////// higher means less trust in physics model -> more trust in sensors
-  Q[0][0] = 0.5f; // x trust
-  Q[1][1] = 0.5f;   // x_dot trust
-  Q[2][2] = 0.5f; // theta trust
-  Q[3][3] = 0.5f;  // theta_dot trust
+  // Q PROCESS NOISE -> tune: trust in physics model ///////// higher means less trust in physics model -> more trust in sensors
+  Q[0][0] = 0.001f;   // x
+  Q[1][1] = 1.0f;   // x_dot
+  Q[2][2] = 0.0001f;   // theta
+  Q[3][3] = 0.01f;   // theta_dot
 
-  // R - sensor trust -> add noise std from datasheet?
-  R[0][0] = 0.1f; // wheel encoders
-  R[1][1] = 0.1f; // pendulum encoder
+  // R: MEASUREMENT NOISE -> higher R means trust sensors less
+  R[0][0] = 0.05f;   // x
+  R[1][1] = 0.005f;   // theta
+
+
 }
 
 void KalmanFilter::predict(float u){
