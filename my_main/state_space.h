@@ -2,7 +2,7 @@
 #include <Arduino.h>
 
 // Physical parameters (from dynamics.py)
-constexpr float M_cart_total  = 1.515f; // REMEASURE
+constexpr float M_cart_total  = 1.593f; // REMEASURE
 constexpr float m_rod   = 0.043f;
 constexpr float m_tip   = 0.050f;
 constexpr float M_cart  = M_cart_total - m_rod - m_tip; // 0.828

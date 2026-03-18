@@ -4,7 +4,7 @@
 #include "pendulum_encoder.h"
 #include "motors.h"
 
-
+#define START_BUTTON_PIN  10
 
 float d1, d2, d3, d4; // motor encoder distance readings
 float avg_dist;
@@ -26,11 +26,15 @@ float start_angle = radians(10); // angle in rad
 
 bool SPRINT = false;
 
+bool system_running = false; // Starts paused
+bool button_pressed = false; // Tracks physical button state
 
 void setup() {
   delay(1000);
 
   Serial.begin(115200);
+
+  pinMode(START_BUTTON_PIN, INPUT_PULLUP); // button setup
   
   pendulumEncoder_init();
   pendulumEncoder_forceZero();// new
@@ -75,7 +79,7 @@ void loop() {
     
     // read pendulum encoder
     float theta = get_pendulum_angle_rad();
-    Serial.println(degrees(theta));
+    //Serial.println(degrees(theta));
     //Serial.println("Invalid counts: " + String(pendulumEncoder_getInvalidCount()));
 
     kalman.predict(u);
@@ -84,7 +88,7 @@ void loop() {
     
     u = controller.run(state);
 
-    //motors_setCommand(u);
+    motors_setCommand(u);
 
   }
   
